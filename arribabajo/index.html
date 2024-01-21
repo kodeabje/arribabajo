@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>arribabajo</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars */
+            height: 100vh; /* Full viewport height */
+            width: 100vw; /* Full viewport width */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: none;
+        }
+
+        #card {
+            height: 100vh; /* Full viewport height */
+            width: auto; /* Full viewport width */
+            object-fit: fill; /* Keep the aspect ratio */
+            cursor: pointer;
+        }
+    </style>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+</head>
+<body>
+
+    <img src="cards/00.svg" alt="card" id="card">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardFaces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            const pips = ['D', 'S', 'C', 'H'];
+            const cardFacesLength = cardFaces.length;
+            const pipsLength = pips.length;
+            let shownCards = new Set();
+            const cardElement = document.getElementById('card');
+            let gameEnded = false;
+    
+            function getRandomCard() {
+                return cardFaces[Math.floor(Math.random() * cardFacesLength)] +
+                       pips[Math.floor(Math.random() * pipsLength)];
+            }
+    
+            function resetGame() {
+                shownCards.clear();
+                gameEnded = false;
+                cardElement.src = `cards/00.svg`;
+            }
+    
+            function handleCardInteraction() {
+                if (gameEnded) {
+                    resetGame();
+                    return;
+                }
+    
+                let randomCard;
+                do {
+                    randomCard = getRandomCard();
+                } while (shownCards.has(randomCard));
+                
+                shownCards.add(randomCard);
+                cardElement.src = `cards/${randomCard}.svg`;
+    
+                if (shownCards.size === 52) {
+                    cardElement.src = `cards/99.svg`;
+                    gameEnded = true;
+                    triggerConfetti();
+                }
+            }
+    
+            cardElement.addEventListener('click', handleCardInteraction);
+    
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    handleCardInteraction();
+                }
+            });
+    
+            function triggerConfetti() {
+                confetti({
+                    particleCount: 1500,
+                    spread: 800,
+                    origin: { y: 0.4 }
+                });
+            }
+        });
+    </script>  
+</body>
+</html>
